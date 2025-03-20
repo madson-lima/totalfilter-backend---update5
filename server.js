@@ -97,14 +97,16 @@ app.get('/admin/dashboard', verifyToken, (req, res) => {
 // ======================================
 // 6. Rota de Upload de Imagens
 // ======================================
+// Se quiser salvar somente o caminho relativo no DB, retorne /uploads/arquivo
 app.post('/api/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Nenhuma imagem enviada!' });
   }
 
-  // Monta a URL final para acesso ao arquivo
-  const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-  res.status(200).json({ imageUrl });
+  // Monta apenas o caminho relativo (evita problemas de localhost vs. produção)
+  const relativePath = `/uploads/${req.file.filename}`;
+
+  res.status(200).json({ imageUrl: relativePath });
 });
 
 // ======================================
